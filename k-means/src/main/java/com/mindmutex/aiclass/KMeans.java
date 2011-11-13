@@ -99,17 +99,26 @@ public class KMeans {
 				cluster.addPoint(point);
 			}
 			
+			// check how many clusters have significant movement.
+			// this tests whether the algorithm has converged 
 			int peacefulClusters = 0; 
 			for (Cluster cluster : clusters) {
 				Point2D previousCentroid = cluster.getCentroid(); 
 				cluster.updateCentroidPosition();
+				
 				if (distanceAlgorithm.calculate(
 					previousCentroid, cluster.getCentroid()) <= convergeThreshold) { 
 					peacefulClusters++;  
-				}
+				} 
 			}
 			if (peacefulClusters == clusters.size()) {
 				hasMovement = false; 
+			} else {
+				// if we are not finished yet we have to clear 
+				// each cluster data set
+				for (Cluster cluster : clusters) { 
+					cluster.reset(); 
+				}
 			}
 		}
 		return new KMeansResult(clusters, iterations); 
@@ -154,6 +163,16 @@ public class KMeans {
 	
 	public static void main(String[] args) {
 		KMeans clustering = new KMeans(2, new EuclideanDistance());
-		clustering.run(KMeans.randomize(100));
+		KMeansResult result = clustering.run(KMeans.randomize(100));
+		
+		System.out.println("Converge in " + result.getIterations() + " iterations");
+		
+		for (Cluster cluster : result.getClusters()) {
+			System.out.println("Cluster centroid: " + cluster.getCentroid());
+			System.out.println("----------------");
+			for (Point2D point : cluster.getDataSet()) {
+				System.out.println(point.getX() + ", " + point.getY());
+			}
+		}
 	}
 }

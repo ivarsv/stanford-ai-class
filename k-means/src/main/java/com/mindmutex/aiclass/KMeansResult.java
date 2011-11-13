@@ -42,7 +42,7 @@ public class KMeansResult {
 	
 	public KMeansResult(List<Cluster> clusters, int iterations) {
 		this.clusters = Collections.unmodifiableList(clusters);
-		this.iterations = 0; 
+		this.iterations = iterations; 
 	}
 	
 	public List<Cluster> getClusters() { 
